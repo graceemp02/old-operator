@@ -18,14 +18,18 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 const DashboardPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const { machineID } = useContext(MachineContext);
+
   const [date, setDate] = useState();
   useEffect(() => {
+    setIsLoading(true);
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     axios
       .get(`../inspection.php?api=${machineID}`, { cancelToken: source.token })
       .then(res => {
+        setIsLoading(false);
         setDate(res.data.res);
       })
       .catch(err => console.log(err));
@@ -47,7 +51,7 @@ const DashboardPage = () => {
           <>
             <Item>
               <Typography variant='h6' fontWeight='bold' color='black'>
-                Inspection Date: {date}
+                Inspection Date: {isLoading ? 'Loading...' : date}
               </Typography>
             </Item>
             <Item sx={{ mt: 0.5 }}>

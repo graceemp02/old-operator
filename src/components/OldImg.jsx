@@ -128,7 +128,7 @@ const OldImg = ({ date }) => {
           Filter image is not uploaded for selected machine yet!
         </Typography>
       )}
-      {/* <img width='100%' src='https://source.unsplash.com/random' /> */}
+
       {dialog.status && (
         <MyDialog
           title={dialog.title}

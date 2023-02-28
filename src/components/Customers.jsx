@@ -10,11 +10,16 @@ import axios from 'axios';
 import { ClientContext } from '../context/ClientContext';
 
 function Customers() {
+  const selected = localStorage.getItem('op_client');
   const { setClientID } = useContext(ClientContext);
   const [customers, setCustomers] = useState([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    if (selected) {
+      setClientID(selected);
+      return selected;
+    } else return 0;
+  });
   const [query, setQuery] = useState('');
-
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
@@ -22,36 +27,20 @@ function Customers() {
       .get('../customers.php', { cancelToken: source.token })
       .then(result => {
         setCustomers(result.data);
-        setSelectedIndex(result.data[0].id);
-        setClientID(result.data[0].id);
+        if (!selected) {
+          localStorage.setItem('op_client', result.data[0].id);
+          setSelectedIndex(result.data[0].id);
+          setClientID(result.data[0].id);
+        }
       })
       .catch(error => console.log(error));
-    // setCustomers([
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    //   { id: 1, name: 'Anees' },
-    //   { id: 2, name: 'Malik' },
-    // ]);
     return () => {
       source.cancel();
     };
   }, []);
 
   const handleListItemClick = (e, index) => {
+    localStorage.setItem('op_client', index);
     e.preventDefault();
     setSelectedIndex(index);
     setClientID(index);

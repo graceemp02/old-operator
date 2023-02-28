@@ -7,15 +7,21 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { Typography } from '@mui/material';
 import axios from 'axios';
-import { ClientContext } from '../context/ClientContext';
 import { MachineContext } from '../context/MachineContext';
 
 function Machines() {
-  const { clientID } = useContext(ClientContext);
+  const selected = localStorage.getItem('op_mach');
+  const selectedClient = localStorage.getItem('op_mach_client');
+  const clientID = localStorage.getItem('op_client');
   const { setMachineID } = useContext(MachineContext);
 
   const [machines, setMachines] = useState([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    if (selected && clientID === selectedClient) {
+      setMachineID(selected);
+      return selected;
+    } else return 0;
+  });
   useEffect(() => {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
@@ -26,8 +32,12 @@ function Machines() {
       })
       .then(result => {
         setMachines(result.data);
-        setSelectedIndex(result.data[0].apiToken);
-        setMachineID(result.data[0].apiToken);
+        if (selectedClient !== clientID || !selected) {
+          localStorage.setItem('op_mach_client', clientID);
+          localStorage.setItem('op_mach', result.data[0].apiToken);
+          setSelectedIndex(result.data[0].apiToken);
+          setMachineID(result.data[0].apiToken);
+        }
       })
       .catch(error => console.log(error));
     return () => {
@@ -35,6 +45,8 @@ function Machines() {
     };
   }, [clientID]);
   const handleListItemClick = (event, index) => {
+    localStorage.setItem('op_mach', index);
+    localStorage.setItem('op_mach_client', clientID);
     setSelectedIndex(index);
     setMachineID(index);
   };

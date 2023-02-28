@@ -14,7 +14,6 @@ function App() {
   const [clientID, setClientID] = useState();
   const [machineID, setMachineID] = useState();
   return (
-    // <BrowserRouter>
     <BrowserRouter basename='/operator'>
       <ThemeProvider theme={theme}>
         <ClientContext.Provider value={{ clientID, setClientID }}>
