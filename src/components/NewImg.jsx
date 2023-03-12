@@ -31,15 +31,18 @@ const NewImg = ({ date }) => {
   const [isAllowed, setAllowed] = useState(true);
   const [dialog, setDialog] = useState({ status: false, msg: '', title: '' });
   const { machineID } = useContext(MachineContext);
+  const [isLoadin, setLoading] = useState(false);
   const [url, setUrl] = useState();
   const cancleToken = axios.CancelToken;
   const source = cancleToken.source();
   const getImg = async () => {
+    setLoading(true);
     await axios
       .get(`filterImg.php?api=${machineID}&name=inspectionPicAfter`, {
         cancelToken: source.cancelToken,
       })
       .then(res => {
+        setLoading(false);
         res.data.res ? setUrl(`${axios.defaults.baseURL}/${res.data.res}`) : setUrl();
       })
       .catch(err => console.log(err));
@@ -114,7 +117,12 @@ const NewImg = ({ date }) => {
           <LinearProgressWithLabel value={progress} />
         </Box>
       )}
-      {url ? (
+      {isLoadin ? (
+        <Typography
+          sx={{ paddingBlock: 2, color: 'rgba(0,0,0,0.8)', borderTop: '2px solid black' }}>
+          Loading...
+        </Typography>
+      ) : url ? (
         <img width='100%' src={url} />
       ) : (
         <Typography

@@ -41,10 +41,10 @@ const DashboardPage = () => {
   return (
     <Grid container spacing={0.5} sx={{ p: 1 }}>
       <Grid item xs={12} md={5} lg={2.5}>
-        <Item>
-          <Customers />
-          <Machines />
-        </Item>
+        {/* <Item> */}
+        <Customers />
+        <Machines />
+        {/* </Item> */}
       </Grid>
       <Grid item xs={12} md={7} lg={9.5}>
         {machineID ? (
